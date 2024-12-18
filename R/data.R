@@ -1,0 +1,33 @@
+#' Simulated SWIM Dataset with Binary Response
+#'
+#' @name swim
+#' @docType data
+#' @usage data(swim)
+#' @keywords data
+#' @format A list containing the following elements:
+#' \describe{
+#'   \item{x}{A 3211 by 12 matrix of numeric values.}
+#'      \item{female}{Binary variable indicating gender (1 = Female, 0 = Male).}
+#'      \item{agege35}{Binary variable indicating if the individual is aged 35 or older (1 = Age 35 or older, 0 = Younger than 35).}
+#'      \item{hsdip}{Binary variable indicating if the individual has a high school diploma (1 = Has diploma, 0 = No diploma).}
+#'      \item{nevmar}{Binary variable indicating if the individual has never been married (1 = Never married, 0 = Ever married).}
+#'      \item{divwid}{Binary variable indicating if the individual is divorced or widowed (1 = Divorced or widowed, 0 = Otherwise).}
+#'      \item{numchild}{Numerical variable indicating the number of children the individual has.}
+#'      \item{childlt6}{Binary variable indicating if the individual has children under the age of 6 (1 = Has children under 6, 0 = No children under 6).}
+#'      \item{blknh}{Binary variable indicating if the individual is black non-Hispanic (1 = Black Non-Hispanic, 0 = Otherwise).}
+#'      \item{hisp}{Binary variable indicating if the individual is Hispanic (1 = Newly Hispanic, 0 = Otherwise).}
+#'      \item{earnyrm1}{Numerical variable indicating the individual's earnings one year prior to the study (possibly negative earnings or debt).}
+#'      \item{empyrm1}{Binary variable indicating if the individual was employed one year prior to the study (1 = Employed, 0 = Unemployed).}
+#'      \item{enrol}{Binary variable indicating if the individual was enrolled the job hunting training session (1 = Enrolled, 0 = Unenrolled).}
+#'   \item{y}{A 3211 by 1 matrix containing zeros and ones.}
+#'      \item{empyr1}{Binary variable indicating if the individual was employed one year after the start of the study (1 = Employed, 0 = Unemployed).}
+#' }
+#' @references
+#' Friedlander, D., & Hamilton, G. (1993). The Saturation Work Initiative Model in San Diego: A Five-Year Follow-up Study.
+#'
+#' @note
+#' The dataset used in this study was simulated based on the patterns and results described
+#' in "The Saturation Work Initiative Model in San Diego: A Five-Year Follow-up Study".
+#' This data is not directly extracted from the book but was generated to emulate a similar structure
+#' for research and educational purposes.
+"swim"

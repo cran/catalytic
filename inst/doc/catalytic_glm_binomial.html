@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Yitong Wu ywu039@e.ntu.edu.sg" />
+
+
+<title>catalytic_glm_binomial</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">catalytic_glm_binomial</h1>
+<h4 class="author">Yitong Wu <a href="mailto:ywu039@e.ntu.edu.sg" class="email">ywu039@e.ntu.edu.sg</a></h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#Introduction" id="toc-Introduction">Introduction</a></li>
+<li><a href="#DataPreparation" id="toc-DataPreparation">Data
+Preparation</a></li>
+<li><a href="#usage-of-catalytic" id="toc-usage-of-catalytic">Usage of
+<code>catalytic</code></a>
+<ul>
+<li><a href="#Initialization" id="toc-Initialization">Step 1:
+Initialization</a></li>
+<li><a href="#cat_glm" id="toc-cat_glm">Step 2.1: Choose Method(s) -
+Estimation with fixed tau</a></li>
+<li><a href="#cat_glm_tune" id="toc-cat_glm_tune">Step 2.2: Choose
+Method(s) - Estimation with Selective tau</a>
+<ul>
+<li><a href="#CrossValidation" id="toc-CrossValidation">Cross-validation
+(risk_estimate_method = “cross_validation”)</a></li>
+<li><a href="#Bootstrap" id="toc-Bootstrap">Bootstrap
+(risk_estimate_method = “parametric_bootstrap”)</a></li>
+<li><a href="#SteinianEstimate" id="toc-SteinianEstimate">Steinian
+Estimate (risk_estimate_method = “steinian_estimate”)</a></li>
+<li><a href="#recommendations-for-choosing-risk_estimate_method-and-discrepancy_method" id="toc-recommendations-for-choosing-risk_estimate_method-and-discrepancy_method">Recommendations
+for Choosing <code>risk_estimate_method</code> and <code id="Recommendations">discrepancy_method</code></a></li>
+<li><a href="#AutoParamSelect" id="toc-AutoParamSelect">Automatic
+Parameter Selection</a></li>
+</ul></li>
+<li><a href="#cat_glm_bayes" id="toc-cat_glm_bayes">Step 2.3: Choose
+Method(s) - Bayesian Posterior Sampling with Fixed Tau</a></li>
+<li><a href="#cat_glm_bayes_joint" id="toc-cat_glm_bayes_joint">Step
+2.4: Choose Method(s) - Bayesian Posterior Sampling with Adaptive
+Tau</a></li>
+<li><a href="#SpecialForBinomial" id="toc-SpecialForBinomial">Step 2.5:
+Choose Method(s) - Special Approaches for Binomial Models</a>
+<ul>
+<li><a href="#GibbsSampling" id="toc-GibbsSampling">Gibbs
+Sampling</a></li>
+<li><a href="#HighTauLowerBound" id="toc-HighTauLowerBound">Setting
+Higher Tau Lower Bound</a></li>
+<li><a href="#IncorporateTheta" id="toc-IncorporateTheta">Incorporating
+theta (1/tau)</a></li>
+<li><a href="#IncorporateThetaWithAdapAlpha" id="toc-IncorporateThetaWithAdapAlpha">Incorporating theta (1/tau) with
+Adaptive Alpha</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div id="Introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This vignette provides an <em>overview</em> of how to use the
+functions in the <strong>catalytic</strong> package that focuses on GLM
+Logistic Regression. The other <strong>catalytic</strong> vignettes go
+into other model-estimating functions.</p>
+<p>The goal of the <strong>catalytic</strong> package is to build
+framework for catalytic prior distributions. Stabilizing
+high-dimensional working models by shrinking them towards simplified
+models. This is achieved by supplementing observed data with weighted
+synthetic data generated from a predictive distribution under the
+simpler model.</p>
+<p>For more information, see <span class="citation">(<a href="#ref-catalytic_glm">Huang et al. 2020</a>)</span>.</p>
+<p>The two steps of using catalytic package for GLM Logistic Regression
+are</p>
+<ol style="list-style-type: decimal">
+<li><p>Initialization: The <code>cat_glm_initialization</code> function
+constructs a <code>cat_init</code> object based on the formula provided
+by the user to generate synthetic data. The resulting
+<code>cat_init</code> object is tailored to facilitate further analysis,
+and is integral for subsequent modeling steps in the
+<code>catalytic</code> package.</p></li>
+<li><p>Choose Method(s): Users have the flexibility to choose from five
+main functions within the catalytic package: <code>cat_glm</code>,
+<code>cat_glm_tune</code>, <code>cat_glm_bayes_joint_gibbs</code>,
+<code>cat_glm_bayes</code>, and <code>cat_glm_bayes_joint</code>. Each
+function serves a specific purpose in modeling with catalytic priors and
+offers distinct capabilities tailored to different modeling scenarios
+for GLM Logistic Regression. This approach enables users to seamlessly
+incorporate synthetic data with varying weights from different method
+into GLM Logistic Regression analyses, providing flexibility and control
+over the modeling process.</p></li>
+</ol>
+</div>
+<div id="DataPreparation" class="section level1">
+<h1>Data Preparation</h1>
+<p>Creating a high-dimensional dataset with a low data size. This step
+involves increasing the number of features (dimensions) while keeping
+the number of observations (data size) relatively small. This is useful
+for testing the performance of <code>catalytic</code> models in
+high-dimensional settings.</p>
+<p>The <code>swim</code> dataset is loaded and split into training
+(<code>train_data</code>) and test (<code>test_data</code>)
+datasets.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catalytic)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># Function for calculating the mean of logarithmic error between true response and estimated response</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>get_mean_logarithmic_error <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, est_Y) {</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="fl">0.0001</span>, <span class="fu">pmin</span>(<span class="fl">0.9999</span>, Y))</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  est_Y <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="fl">0.0001</span>, <span class="fu">pmin</span>(<span class="fl">0.9999</span>, est_Y))</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">mean</span>(Y <span class="sc">*</span> <span class="fu">log</span>(Y <span class="sc">/</span> est_Y) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> Y) <span class="sc">*</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> Y) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> est_Y))))</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>}</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># Load swim dataset for binomial analysis</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;swim&quot;</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>swim_data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(swim<span class="sc">$</span>x, swim<span class="sc">$</span>y)</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co"># Seperate observation data into train and test data</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="sc">*</span> <span class="fu">ncol</span>(swim<span class="sc">$</span>x <span class="sc">+</span> <span class="dv">1</span>) <span class="co"># Size for training data</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(swim_data), n)</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> swim_data[train_idx, ]</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> swim_data[<span class="sc">-</span>train_idx, ]</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="fu">dim</span>(train_data)</span></code></pre></div>
+<p>In this section, we explore the foundational steps of fitting a
+logistic regression model (GLM) using the <code>stats::glm</code>
+function with the binomial family.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Fit a logistic regression model (GLM)</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>glm_model <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">glm</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> .,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">family =</span> binomial,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">data =</span> train_data</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  glm_model,</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="st">&quot;MLE GLM Binomial Model - Logarithmic Error:&quot;</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>    <span class="at">est_Y =</span> predicted_y</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>  )</span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the <code>predicted_y</code> from
+<code>glm_model</code> versus the <code>test_data$empyr1</code>, this
+can be a great way to visually assess the accuracy and performance of
+the model.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, predicted_y)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (MLE)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>
+<div id="usage-of-catalytic" class="section level1">
+<h1>Usage of <code>catalytic</code></h1>
+<div id="Initialization" class="section level2">
+<h2>Step 1: Initialization</h2>
+<p>To initialize data for GLM Logistic Regression using the
+<code>catalytic</code> package, the <code>cat_glm_initialization</code>
+function is employed. This function facilitates the setup by preparing
+synthetic data tailored for modeling purposes.</p>
+<p>Here’s a breakdown of the parameters used:</p>
+<ul>
+<li><p><code>formula</code>: Specifies the model formula, indicating the
+response variable (empyr1) modeled against a constant predictor. See
+<code>?stats::glm</code> for details on formula syntax.</p></li>
+<li><p><code>family</code>: Defines the type of Generalized Linear Model
+(GLM) family, here set to <code>binomial</code> for logistic
+regression.</p></li>
+<li><p><code>data</code>: Represents the original dataset, structured as
+a <code>data.frame</code>.</p></li>
+<li><p><code>syn_size</code>: Determines the size of the synthetic data
+generated, defaulted to four times the number of columns in the original
+data.</p></li>
+<li><p><code>x_degree</code>: Determines the degree of the polynomial
+terms for the predictors in the model, which affects the diversity or
+complexity of the predictor terms included in the model. Defaulted to
+<code>NULL</code>, which means the degree for all predictors is
+1.</p></li>
+<li><p><code>resample_only</code>: Determines whether synthetic data is
+exclusively generated by resampling from the original dataset. By
+default, it is set to <code>FALSE</code>, allowing the function to apply
+various resampling strategies based on the characteristics of dataset
+(e.g. flattening).</p></li>
+<li><p><code>na_replace</code>: Specifies the method for handling
+missing values in the dataset, defaulted to <code>stats::na.omit</code>.
+Here is <code>mean</code>, which can replace <code>NA</code> in
+<code>data</code> with the mean of each column.</p></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>cat_init <span class="ot">&lt;-</span> <span class="fu">cat_glm_initialization</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">family =</span> binomial, <span class="co"># Default: gaussian</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">data =</span> train_data,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">syn_size =</span> <span class="dv">50</span>, <span class="co"># Default: 4 times the number of predictors</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">x_degree =</span> <span class="cn">NULL</span>, <span class="co"># Default: NULL, which means degrees of all predictors are 1</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">resample_only =</span> <span class="cn">FALSE</span>, <span class="co"># Default: FALSE</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">na_replace =</span> mean <span class="co"># Default: stats::na.omit</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>cat_init</span></code></pre></div>
+<p>Here shows how users can simplify the input for
+<code>cat_glm_initialization</code>. User do not have to specify
+<code>syn_size</code> and other parameters, as they have default values,
+which mentioned above.</p>
+<p><code>cat_init</code> object contains a list of attributes, which is
+typically generated from above function <a href="#Initialization"><code>cat_glm_initialization</code></a>. These
+attributes provide comprehensive information for below modeling tasks or
+for user check.</p>
+<p>Here’s a breakdown of all attributes except the input parameters:</p>
+<ul>
+<li><p><code>function_name</code>: The name of this function, which is
+<code>cat_glm_initialization</code>.</p></li>
+<li><p><code>obs_size</code>: The number of observations (rows) in the
+original dataset (<code>obs_data</code>).</p></li>
+<li><p><code>obs_data</code>: The original dataset
+(<code>data</code>).</p></li>
+<li><p><code>obs_x</code>: The covariates from original dataset
+(<code>obs_data</code>).</p></li>
+<li><p><code>obs_y</code>: The response from original dataset
+(<code>obs_data</code>).</p></li>
+<li><p><code>syn_size</code>: The size of synthetic data
+generated.</p></li>
+<li><p><code>syn_data</code>: The synthetic data created for modeling
+purposes, based on the original dataset (<code>obs_data</code>)
+characteristics.</p></li>
+<li><p><code>syn_x</code>: The covariates from synthetic dataset
+(<code>syn_data</code>).</p></li>
+<li><p><code>syn_y</code>: The response from synthetic dataset
+(<code>syn_data</code>).</p></li>
+<li><p><code>syn_x_resample_inform</code>: The information detailing the
+process of resampling synthetic data.</p></li>
+<li><p><code>size</code>: The total size of the combined dataset
+(<code>obs_size</code> and <code>syn_size</code>).</p></li>
+<li><p><code>data</code>: The combined dataset (<code>obs_data</code>
+and <code>syn_data</code>).</p></li>
+<li><p><code>x</code>: The combined covariates (<code>obs_x</code> and
+<code>syn_x</code>)</p></li>
+<li><p><code>y</code>: The combined response (<code>obs_y</code> and
+<code>syn_y</code>)</p></li>
+</ul>
+<p>For more details, please check
+<code>?cat_glm_initialization</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">names</span>(cat_init)</span></code></pre></div>
+<p>And of course, user can extract items mentioned above from
+<code>cat_glm_initialization</code> object.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># The number of observations (rows) in the original dataset (`obs_data`)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>cat_init<span class="sc">$</span>obs_size</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># The information detailing the process of resampling synthetic data</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>cat_init<span class="sc">$</span>syn_x_resample_inform</span></code></pre></div>
+</div>
+<div id="cat_glm" class="section level2">
+<h2>Step 2.1: Choose Method(s) - Estimation with fixed tau</h2>
+<p>The <code>cat_glm</code> function fits a Generalized Linear Model
+(GLM) with a catalytic prior on the regression coefficients. It utilizes
+information from the <code>cat_init</code> object generated during the
+initialization step, which includes both observed and synthetic data,
+plus other relevant information.</p>
+<p>The GLM model is then fitted using the specified formula, family, and
+a single <code>tau</code>(synthetic data down-weight factor). The
+resulting <code>cat_glm</code> object encapsulates the fitted model,
+including estimated coefficients and family information, facilitating
+further analysis.</p>
+<p>Here’s a breakdown of the parameters used:</p>
+<ul>
+<li><p><code>formula</code>: This parameter specifies the model formula
+used in the GLM (Generalized Linear Model). It defines the relationship
+between the response variable and the predictors. Alternatively, besides
+using in format <code>RESPONSE ~ COVARIATES</code>, user can also use
+<code>~ COVARIATES</code> without specifying the response name, since
+the response name is defined in the initialization step.</p></li>
+<li><p><code>cat_init</code>: This parameter is essential and represents
+the initialization object (<code>cat_init</code>) created using <span id="Initialization"><code>cat_glm_initialization</code></span>. It
+contains both observed and synthetic data, plus other relevant
+information, necessary for model fitting.</p></li>
+<li><p><code>tau</code>: This parameter determines the down-weight
+assigned to synthetic data relative to observed data. It influences the
+influence of synthetic data in the model fitting process. If not
+specified (<code>NULL</code>), it defaults to a one forth of the number
+of predictors.</p></li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>cat_glm_model <span class="ot">&lt;-</span> <span class="fu">cat_glm</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> female <span class="sc">+</span> agege35, <span class="co"># Same as `~ female + agege35`</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">tau =</span> <span class="dv">10</span> <span class="co"># Default: number of predictors / 4</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>cat_glm_model</span></code></pre></div>
+<p>Here shows how users can simplify the input for <code>cat_glm</code>.
+User do not have to specify <code>tau</code>, as <code>tau</code> has
+default value , which mentioned above.</p>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>cat_glm_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  cat_glm_model,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="st">&quot;Catalytic `cat_glm` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_predicted_y</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  )</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the <code>cat_glm_predicted_y</code>
+from <code>cat_glm_model</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_predicted_y)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>Both <code>cat_glm_model</code> and <code>cat_glm_model</code>
+objects are outputs from the <code>cat_glm</code> function, providing a
+list of attributes for further analysis or user inspection.</p>
+<p>Here’s a breakdown of all attributes except the input parameters:</p>
+<ul>
+<li><p><code>function_name</code>: The name of the function
+(<code>cat_glm</code>).</p></li>
+<li><p><code>model</code>: The fitted GLM model object obtained from
+<code>stats::glm</code>, with <code>tau</code>.</p></li>
+<li><p><code>coefficients</code>: The estimated coefficients from the
+fitted GLM model <code>model</code>.</p></li>
+</ul>
+<p>For more details, please check <code>?cat_glm</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">names</span>(cat_glm_model)</span></code></pre></div>
+<p>User can extract items mentioned above from <code>cat_glm</code>
+object.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># The formula used for modeling</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>cat_glm_model<span class="sc">$</span>formula</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co"># The fitted GLM model object obtained from `stats::glm` with `tau`</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>cat_glm_model<span class="sc">$</span>coefficients</span></code></pre></div>
+</div>
+<div id="cat_glm_tune" class="section level2">
+<h2>Step 2.2: Choose Method(s) - Estimation with Selective tau</h2>
+<p>The <code>cat_glm_tune</code> function fits a GLM with a catalytic
+prior on the regression coefficients and provides options for optimizing
+model performance over a range of tau values(<code>tau_seq</code>).</p>
+<p>These methods empower users to fit and optimize GLM models with
+catalytic priors, leveraging both observed and synthetic data to enhance
+model performance and robustness in various statistical analyses.</p>
+<div id="CrossValidation" class="section level3">
+<h3>Cross-validation (risk_estimate_method = “cross_validation”)</h3>
+<p>This method computes the partial likelihood across a specified range
+of tau values (<code>tau_seq</code>). It iterates through each tau
+value, evaluating its performance based on cross-validation folds
+(<code>cv_fold_num</code>) to select the optimal tau that minimizes the
+discrepancy error.</p>
+<p>Here’s a breakdown of the parameters used:</p>
+<ul>
+<li><p><code>formula</code> and <code>cat_init</code> are same as <a href="#cat_glm">above</a>.</p></li>
+<li><p><code>risk_estimate_method</code>: Method for risk estimation,
+chosen from “parametric_bootstrap”, “cross_validation”,
+“mallows_estimate”, “steinian_estimate”. In this example,
+“cross_validation” is used.</p></li>
+<li><p><code>discrepancy_method</code>: Method for discrepancy
+calculation, chosen from “square_error”, “classification_error”,
+“logistic_deviance”. In this example, “logistic_deviance” is used
+because the family is <code>binomial</code>.</p></li>
+<li><p><code>tau_seq</code>: Vector of positive numeric values for
+down-weighting synthetic data. Defaults to a sequence around one fourth
+of the number of predictors.</p></li>
+<li><p><code>cross_validation_fold_num</code>: Number of folds for
+cross-validation. Defaults to 5.</p></li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>cat_glm_tune_cv <span class="ot">&lt;-</span> <span class="fu">cat_glm_tune</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> ., <span class="co"># Same as `~ .`</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">risk_estimate_method =</span> <span class="st">&quot;cross_validation&quot;</span>, <span class="co"># Default auto-select based on the data size</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">discrepancy_method =</span> <span class="st">&quot;logistic_deviance&quot;</span>, <span class="co"># Default auto-select based on family</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="at">tau_seq =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">5.1</span>, <span class="fl">0.5</span>), <span class="co"># Default is a numeric sequence around the number of predictors / 4. Do not recommand to including 0 for cross validation.</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="at">cross_validation_fold_num =</span> <span class="dv">3</span> <span class="co"># Default: 5</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>)</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>cat_glm_tune_cv</span></code></pre></div>
+<p>User can plot the tau_seq (x) against discrepancy error (y) using the
+<code>plot()</code> function. This plot will show the lowest discrepancy
+error at the optimal tau value.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">plot</span>(cat_glm_tune_cv)</span></code></pre></div>
+</div>
+<div id="Bootstrap" class="section level3">
+<h3>Bootstrap (risk_estimate_method = “parametric_bootstrap”)</h3>
+<p>This method estimates tau using bootstrap resampling, refining the
+model through iterative sampling to enhance robustness and accuracy.</p>
+<p>Here’s a breakdown of other parameters used:</p>
+<ul>
+<li><p><code>tau_0</code>: Initial tau value used for discrepancy
+calculation in risk estimation. Defaults to one fourth of the number of
+predictors for binomial and 1 for gaussian.</p></li>
+<li><p><code>bootstrap_iteration_times</code>: Number of bootstrap
+iterations for “parametric_bootstrap” risk estimation. Defaults to
+100.</p></li>
+</ul>
+<p>For the breakdown of other input parameters, please check section <a href="#CrossValidation">Cross Validation</a></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>cat_glm_tune_boots <span class="ot">&lt;-</span> <span class="fu">cat_glm_tune</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span>., <span class="co"># Same as `empyr1 ~ .`</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="at">risk_estimate_method =</span> <span class="st">&quot;parametric_bootstrap&quot;</span>, <span class="co"># Default auto-select based on the data size</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="at">discrepancy_method =</span> <span class="st">&quot;logistic_deviance&quot;</span>, <span class="co"># Default auto-select based on family</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="at">tau_0 =</span> <span class="dv">2</span>, <span class="co"># Default: number of predictors / 4</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>  <span class="at">parametric_bootstrap_iteration_times =</span> <span class="dv">10</span>, <span class="co"># Default: 100</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>cat_glm_tune_boots</span></code></pre></div>
+</div>
+<div id="SteinianEstimate" class="section level3">
+<h3>Steinian Estimate (risk_estimate_method = “steinian_estimate”)</h3>
+<p>This method computes the partial likelihood using a steinian estimate
+approach, optimizing the model based on observed and synthetic data.</p>
+<p>For the breakdown of the input parameters, please check section <a href="#CrossValidation">Cross Validation</a> and <a href="#Bootstrap">Bootstrap</a>)</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>cat_glm_tune_stein <span class="ot">&lt;-</span> <span class="fu">cat_glm_tune</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span>., <span class="co"># Same as `empyr1 ~ .`</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">risk_estimate_method =</span> <span class="st">&quot;steinian_estimate&quot;</span>, <span class="co"># Default auto-select based on the data size</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">discrepancy_method =</span> <span class="st">&quot;logistic_deviance&quot;</span>, <span class="co"># default  auto select based on family</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>)</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>cat_glm_tune_stein</span></code></pre></div>
+</div>
+<div id="recommendations-for-choosing-risk_estimate_method-and-discrepancy_method" class="section level3">
+<h3>Recommendations for Choosing <code>risk_estimate_method</code> and
+<code id="Recommendations">discrepancy_method</code></h3>
+<p>Choosing the appropriate risk_estimate_method and discrepancy_method
+depends on the data size, model complexity, and the specific
+requirements of user’s analysis.</p>
+<ol style="list-style-type: decimal">
+<li>Choosing <code>risk_estimate_method</code></li>
+</ol>
+<ul>
+<li><strong>Small to Medium Data Size (observation data size &lt;=
+200)</strong>
+<ul>
+<li>Default: “parametric_bootstrap”</li>
+<li>For smaller datasets, parametric bootstrap is generally chosen. It
+efficiently estimates the model’s performance using resampling
+techniques.</li>
+</ul></li>
+<li><strong>Large Data Size (observation data size &gt; 200)</strong>:
+<ul>
+<li>Default: “cross_validation”</li>
+<li>For larger datasets, cross-validation is preferred. It provides a
+robust estimate of model performance by splitting the data into multiple
+folds and averaging the results.</li>
+</ul></li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Setting <code>discrepancy_method</code></li>
+</ol>
+<ul>
+<li><strong>GLM Family is binomial (family == “binomial”)</strong>
+<ul>
+<li>For binomial GLM families, “logistic_deviance” is the most
+appropriate option. It calculates the discrepancy based on the logistic
+regression. Besides “logistic_deviance”, user can also choose
+“classification_error” for binary outcomes.</li>
+</ul></li>
+<li><strong>GLM Family is not binomial (family != “binomial”)</strong>:
+<ul>
+<li>Default: “square_error”</li>
+<li>For other GLM families (e.g. gaussian), “square_error” is the only
+option. It measures the discrepancy using squared differences,
+appropriate for continuous outcomes. Please check
+<code>catalytic_glm_gaussian</code> for more details.</li>
+</ul></li>
+</ul>
+</div>
+<div id="AutoParamSelect" class="section level3">
+<h3>Automatic Parameter Selection</h3>
+<p>Of course, user don’t need to worry about specifying these parameters
+explicitly, and they just need to simply provide the
+<code>cat_init</code> object and the <code>formula</code>. then
+<code>cat_glm_tune</code> will automatically select
+<code>risk_estimate_method</code> and <code>discrepancy_method</code>
+based on the dataset size and GLM family type.</p>
+<p>In this example, it is
+<code>risk_estimate_method = &quot;parametric_bootstrap&quot;</code> and
+<code>discrepancy_method = &quot;logistic_deviance&quot;</code>.</p>
+<p>For the breakdown of the input parameters, please check section <a href="#CrossValidation">Cross Validation</a> and <a href="#Bootstrap">Bootstrap</a></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>cat_glm_tune_auto <span class="ot">&lt;-</span> <span class="fu">cat_glm_tune</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span>.,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>)</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>cat_glm_tune_auto</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>cat_glm_tune_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  cat_glm_tune_auto,</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>)</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  <span class="st">&quot;Catalytic `cat_glm_tune` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_tune_predicted_y</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  )</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_tune_predicted_y</code> from
+<code>cat_glm_tune_auto</code> versus the <code>test_data$empyr1</code>,
+this can be a great way to visually assess the accuracy and performance
+of the model.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_tune_predicted_y)</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm_tune)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>All above objects in this section including
+<code>cat_glm_tune_auto</code> objects are outputs from the
+<code>cat_glm_tune</code> function, providing a list of attributes for
+further analysis or user inspection.</p>
+<p>Here’s a breakdown of all attributes except the input parameters:</p>
+<ul>
+<li><p><code>function_name</code>: The name of the function
+(<code>cat_glm_tune</code>).</p></li>
+<li><p><code>tau</code>: Selected optimal tau value from
+<code>tau_seq</code> that minimizes discrepancy error.</p></li>
+<li><p><code>model</code>: The fitted GLM model object obtained from
+<code>stats::glm</code>, with the selected optimal tau
+(<code>tau</code>).</p></li>
+<li><p><code>coefficients</code>: The estimated coefficients from the
+fitted GLM model (<code>model</code>).</p></li>
+<li><p><code>risk_estimate_list</code>: Collected risk estimates across
+different tau values.</p></li>
+</ul>
+<p>For more details, please check <code>?cat_glm_tune</code>.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">names</span>(cat_glm_tune_auto)</span></code></pre></div>
+<p>User can extract items mentioned above from <code>cat_glm_tune</code>
+object.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># The method used for risk estimation</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>cat_glm_tune_auto<span class="sc">$</span>risk_estimate_method</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="co"># Selected optimal tau value from `tau_seq` that minimizes discrepancy error</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>cat_glm_tune_auto<span class="sc">$</span>tau</span></code></pre></div>
+</div>
+</div>
+<div id="cat_glm_bayes" class="section level2">
+<h2>Step 2.3: Choose Method(s) - Bayesian Posterior Sampling with Fixed
+Tau</h2>
+<p>Now, we will explore advanced Bayesian modeling techniques tailored
+for GLM Binomial using the <code>catalytic</code> package. Bayesian
+inference offers a powerful framework to estimate model parameters and
+quantify uncertainty by integrating prior knowledge with observed
+data.</p>
+<p>Below functions enable Bayesian inference for GLM Logistic Regression
+Model with catalytic priors. This function utilizes Markov chain Monte
+Carlo (MCMC) methods, implemented using the <code>rstan</code> package,
+to sample from the posterior distribution of model parameters. Users can
+specify various options such as the number of MCMC chains
+(<code>chains</code>), iterations (<code>iter</code>), warmup steps
+(<code>warmup</code>), and the MCMC algorithm (<code>algorithm</code>).
+User could also apply other attributes to <code>rstan::sampling</code>,
+like <code>refresh</code> and <code>control</code>.</p>
+<p>In this section, we explore Bayesian approaches using the
+<code>cat_glm_bayes</code> function from the <code>catalytic</code>
+package. This function can fit a Bayesian Generalized Linear Model (GLM)
+using a fixed tau value. The MCMC sampling process will generate
+posterior distributions for the coefficients based on the specified
+tau.</p>
+<p>Here’s a breakdown of the parameters used:</p>
+<ul>
+<li><p><code>formula</code>, <code>cat_init</code> and <code>tau</code>
+are same as <a href="#cat_glm">above</a>.</p></li>
+<li><p><code>chains</code>: Number of Markov chains to run during MCMC
+sampling in <code>rstan</code>. Defaults to 4.</p></li>
+<li><p><code>iter</code>: Total number of iterations per chain in the
+MCMC sampling process in <code>rstan</code>. Defaults to 2000.</p></li>
+<li><p><code>warmup</code>: Number of warmup iterations in the MCMC
+sampling process in <code>rstan</code>, discarded as burn-in. Defaults
+to 1000.</p></li>
+<li><p><code>algorithm</code>: Specifies the sampling algorithm used in
+<code>rstan</code>. Defaults to “NUTS” (No-U-Turn Sampler).</p></li>
+<li><p><code>gaussian_variance_alpha</code>: The shape parameter for the
+inverse-gamma prior on variance if the variance is unknown in Gaussian
+models. Defaults to the number of predictors. More explanation in
+<code>catalytic_glm_gaussian.Rmd</code>.</p></li>
+<li><p><code>gaussian_variance_beta</code>: The scale parameter for the
+inverse-gamma prior on variance if the variance is unknown in Gaussian
+models. Defaults to the number of predictors times variance of
+observation response. More explanation in
+<code>catalytic_glm_gaussian.Rmd</code>.</p></li>
+<li><p><code>...</code> (ellipsis): Denotes additional arguments that
+can be passed directly to the underlying <code>rstan::sampling</code>
+function used within <code>cat_glm_bayes</code> to fit the Bayesian GLM
+model. These arguments allow for customization of the Bayesian GLM
+fitting process, such as <code>control</code>, <code>refresh</code>, or
+other model-specific settings.</p></li>
+</ul>
+<p>For more details, please refer to <code>?cat_glm_bayes</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>cat_glm_bayes_model <span class="ot">&lt;-</span> <span class="fu">cat_glm_bayes</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> ., <span class="co"># Same as `~ .`</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>  <span class="at">tau =</span> <span class="dv">50</span>, <span class="co"># Default: number of predictors / 4</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>, <span class="co"># Default: 4</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">100</span>, <span class="co"># Default: 2000</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">50</span>, <span class="co"># Default: 1000</span></span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">&quot;NUTS&quot;</span> <span class="co"># Default: NUTS</span></span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>)</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>cat_glm_bayes_model</span></code></pre></div>
+<p>Here shows how users can simplify the input for
+<code>cat_glm_bayes</code>. User do not have to specify <code>tau</code>
+and other attributes, as <code>tau</code> and other attributes have
+default value, which mentioned above. Here we assign lower value to
+<code>chains</code>, <code>iter</code> and <code>warmup</code> for
+quicker processing time.</p>
+<p>User can also get the trace plot of the <code>rstan</code> model by
+using <code>traceplot()</code> directly into the output from
+<code>cat_glm_bayes</code>.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">traceplot</span>(cat_glm_bayes_model)</span></code></pre></div>
+<p>Plus, user can use this <code>catlaytic::traceplot</code> just like
+the <code>rstan::traceplot</code>, user can add parameters used in
+<code>rstan::traceplot</code>, like <code>include</code> and
+<code>inc_warmup</code>.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">traceplot</span>(cat_glm_bayes_model, <span class="at">inc_warmup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>cat_glm_bayes_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>  cat_glm_bayes_model,</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>)</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>  <span class="st">&quot;MLE GLM Binomial Model - Logarithmic Error:&quot;</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_bayes_predicted_y</span>
+<span id="cb24-12"><a href="#cb24-12" tabindex="-1"></a>  )</span>
+<span id="cb24-13"><a href="#cb24-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_bayes_predicted_y</code> from
+<code>cat_glm_bayes_model</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_bayes_predicted_y)</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm_bayes)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>Both <code>cat_glm_bayes_model</code> and
+<code>cat_glm_bayes_model</code> objects are outputs from the
+<code>cat_glm_bayes</code> function, providing a list of attributes for
+further analysis or user inspection.</p>
+<p>Here’s a breakdown of all attributes except the input parameters:</p>
+<ul>
+<li><p><code>function_name</code>: The name of the function
+(<code>cat_glm_bayes</code>).</p></li>
+<li><p><code>stan_data</code>: The data list used for
+<code>rstan::sampling</code>.</p></li>
+<li><p><code>stan_model</code>: The <code>rstan::stan_model</code>
+object used for Bayesian modeling.</p></li>
+<li><p><code>stan_sample_model</code>: The result object obtained from
+<code>rstan::sampling</code>, encapsulating the MCMC sampling
+results.</p></li>
+<li><p><code>coefficients</code>: The mean estimated coefficients from
+the Bayesian GLM model, extracted from
+<code>rstan::summary(stan_sample_model)$summary</code>.</p></li>
+</ul>
+<p>For more details, please refer to <code>?cat_glm_bayes</code>.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">names</span>(cat_glm_bayes_model)</span></code></pre></div>
+<p>User can extract items mentioned above from
+<code>cat_glm_bayes</code> object.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># The number of Markov chains used during MCMC sampling in `rstan`.</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>cat_glm_bayes_model<span class="sc">$</span>chain</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="co"># The mean estimated coefficients from the Bayesian GLM model</span></span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>cat_glm_bayes_model<span class="sc">$</span>coefficients</span></code></pre></div>
+</div>
+<div id="cat_glm_bayes_joint" class="section level2">
+<h2>Step 2.4: Choose Method(s) - Bayesian Posterior Sampling with
+Adaptive Tau</h2>
+<p>In this section, we delve into Bayesian methodologies employing the
+<code>cat_glm_bayes_joint</code> function within the
+<code>catalytic</code> package. Unlike its non-adaptive counterpart
+(<code>cat_glm_bayes</code>), this method employs a joint tau prior
+approach where tau is treated as a parameter within the MCMC sampling
+process, improving the robustness and accuracy of parameter estimation
+in Bayesian Binomial modeling.</p>
+<p>In this section, we explore Bayesian approaches using the
+<code>cat_glm_bayes_joint</code> function from the
+<code>catalytic</code> package. These functions are similar to their
+non-adaptive (non-joint) version (<code>cat_glm_bayes</code>), but
+corporate <code>tau</code> into the MCMC sampling process.</p>
+<p>Here’s a breakdown of the parameters used:</p>
+<ul>
+<li><p><code>formula</code>, and <code>cat_init</code> are same as <a href="#cat_glm">above</a>.</p></li>
+<li><p><code>chains</code>, <code>iter</code>, <code>warmup</code>,
+<code>algorithm</code>, <code>gaussian_variance_alpha</code> and
+<code>gaussian_variance_beta</code>are same in section <a href="#cat_glm_bayes">Bayesian Posterior Sampling with Fixed
+Tau</a>.</p></li>
+<li><p><code>tau_alpha</code>: Alpha parameter controlling degrees of
+freedom for distribution in the joint tau approach. Default is
+2.</p></li>
+<li><p><code>tau_gamma</code>: Gamma parameter in the joint tau
+approach. Default is 1.</p></li>
+<li><p><code>binomial_joint_theta</code>: Logical. If TRUE, use theta
+parameter in the binomial model. Default is FALSE. More explanation in
+below section <a href="#IncorporateTheta">Incorporating theta
+(1/tau)</a>.</p></li>
+<li><p><code>binomial_joint_alpha</code>: Logical. If TRUE, use joint
+alpha in the binomial model. Default is FALSE. More explanation in below
+section <a href="#IncorporateThetaWithAdapAlpha">Incorporating theta
+(1/tau) with Adaptive Alpha</a>.</p></li>
+<li><p><code>binomial_tau_lower</code>: Lower limit for the tau
+parameter in the binomial model. Default is 0.05. More explanation in
+below section <a href="#HighTauLowerBound">Setting Higher Tau Lower
+Bound</a>.</p></li>
+<li><p><code>...</code>(ellipsis): Denotes additional arguments that can
+be passed directly to the underlying <code>rstan::sampling</code>
+function used within <code>cat_glm_bayes</code> to fit the Bayesian GLM
+model. These arguments allow for customization of the Bayesian GLM
+fitting process, such as <code>control</code>, <code>refresh</code>, or
+other model-specific settings.</p></li>
+</ul>
+<p>For more details, please refer to
+<code>?cat_glm_bayes_joint</code>.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>cat_glm_bayes_joint_model <span class="ot">&lt;-</span> <span class="fu">cat_glm_bayes_joint</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> ., <span class="co"># Same as `~ .`</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>, <span class="co"># Default: 4</span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">100</span>, <span class="co"># Default: 2000</span></span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">50</span>, <span class="co"># Default: 1000</span></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">&quot;NUTS&quot;</span>, <span class="co"># Default: NUTS</span></span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>  <span class="at">tau_alpha =</span> <span class="dv">2</span>, <span class="co"># Default: 2</span></span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>  <span class="at">tau_gamma =</span> <span class="dv">1</span> <span class="co"># Default: 1</span></span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>)</span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>cat_glm_bayes_joint_model</span></code></pre></div>
+<p>Here shows how users can simplify the input for
+<code>cat_glm_bayes_joint</code>. User do not have to specify
+<code>tau_alpha</code> and other attributes, as these attributes have
+default value, which mentioned above. Here we assign lower value to
+<code>chains</code>, <code>iter</code> and <code>warmup</code> for
+quicker processing time.</p>
+<p>User can also get the traceplot of the <code>rstan</code> model by
+using <code>traceplot()</code> directly into the output from
+<code>cat_glm_bayes_joint</code>.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">traceplot</span>(cat_glm_bayes_joint_model)</span></code></pre></div>
+<p>Like the <a href="#cat_glm_bayes"><code>traceplot</code> shown in the
+<code>cat_glm_bayes</code> function</a> , user can add parameters used
+in <code>rstan::traceplot</code>, like <code>include</code> and
+<code>inc_warmup</code>.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">traceplot</span>(cat_glm_bayes_joint_model, <span class="at">inc_warmup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>cat_glm_bayes_joint_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  cat_glm_bayes_joint_model,</span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>)</span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>  <span class="st">&quot;Catlytic `cat_glm_bayes_joint` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_bayes_joint_predicted_y</span>
+<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a>  )</span>
+<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_bayes_joint_predicted_y</code> from
+<code>cat_glm_bayes_joint_model</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_bayes_joint_predicted_y)</span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm_bayes_joint)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>Both <code>cat_glm_bayes_joint_model</code> and
+<code>cat_glm_bayes_joint_model</code> objects are outputs from the
+<code>cat_glm_bayes_joint</code> function, providing a list of
+attributes for further analysis or user inspection.</p>
+<p>Here’s a breakdown of all attributes except the input parameters:</p>
+<ul>
+<li><p><code>function_name</code>: The name of the function
+(<code>cat_glm_bayes_joint</code>).</p></li>
+<li><p><code>tau</code>: The estimated tau parameter from the MCMC
+sampling <code>rstan::sampling</code>, depending on the model
+configuration.</p></li>
+<li><p><code>stan_data</code>, <code>stan_model</code>,
+<code>stan_sample_model</code> and <code>coefficients</code> are same in
+section <a href="#cat_glm_bayes">Bayesian Posterior Sampling with Fixed
+Tau</a>.</p></li>
+</ul>
+<p>For more details, please refer to
+<code>?cat_glm_bayes_joint</code>.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">names</span>(cat_glm_bayes_joint_model)</span></code></pre></div>
+<p>User can extract items mentioned above from
+<code>cat_glm_bayes_joint</code> object.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="co"># The estimated tau parameter from the MCMC sampling `rstan::sampling`,</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>cat_glm_bayes_joint_model<span class="sc">$</span>tau</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a><span class="co"># The mean estimated coefficients from the Bayesian GLM model</span></span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>cat_glm_bayes_joint_model<span class="sc">$</span>coefficients</span></code></pre></div>
+</div>
+<div id="SpecialForBinomial" class="section level2">
+<h2>Step 2.5: Choose Method(s) - Special Approaches for Binomial
+Models</h2>
+<p>Traditional methods like <code>rstan</code> often face challenges in
+accurately fitting Binomial models, such as computational inefficiencies
+and convergence issues. To overcome these limitations, we would like to
+introduce below four specialized approaches designed to improve
+parameter estimation accuracy, enhance convergence rates, and better
+handle the complexities inherent in Binomial modeling.</p>
+<div id="GibbsSampling" class="section level3">
+<h3>Gibbs Sampling</h3>
+<p>Besides the above two approaches,
+<code>cat_glm_bayes_joint_gibbs</code> function utilizes Gibbs sampling.
+enhancing performance in Bayesian modeling tasks.</p>
+<p>This approach is particularly advantageous for handling complex data
+distributions and intricate variable inter-dependency. Gibbs sampling
+sequentially samples from conditional distributions, efficiently
+exploring joint posterior distributions and promoting faster convergence
+rates compared to direct <code>rstan</code> approaches.</p>
+<p>Within the <code>cat_glm_bayes_joint_gibbs</code> function,
+Hamiltonian Monte Carlo (HMC) is employed for more efficient exploration
+of the parameter space, as described by Radford M. Neal (2010).</p>
+<p>The Gibbs algorithm can be used to sample from the posterior
+distribution under the joint prior <span class="math inline">\(\pi_{\alpha, \gamma}(\tau, \beta)\)</span>. The
+Gibbs algorithm iterative samples one component from the conditional
+distribution holding the other component fixed. Given coefficients
+(<span class="math inline">\(\beta\)</span>), an update of τ can be
+sampled from the Gamma distribution.</p>
+<p><span class="math display">\[
+\pi_{\alpha, \gamma}(\tau | \beta, \mathbf{Y},
+\mathbf{X})  \propto\Gamma_{\alpha, \gamma}(\tau) \exp \left(
+\frac{\tau}{M} \sum_{i=1}^{M} \log(f(Y_i^* | \beta^\top \mathbf{X}_i^*))
+\right)
+\]</span></p>
+<p><span class="math display">\[
+= \tau^{c-1} \exp \left( -\tau \left( \kappa + \frac{1}{\gamma} -
+\frac{1}{M} \sum_{i=1}^{M} \log(f(Y_i^* | \beta^\top \mathbf{X}_i^*))
+\right) \right)
+\]</span></p>
+<p>Given tau (<span class="math inline">\(\tau\)</span>), an update of
+coefficients (<span class="math inline">\(\beta\)</span>) should be
+drawn from</p>
+<p><span class="math display">\[
+\pi(\beta | \tau, \mathbf{Y}, \mathbf{X})  \propto f(Y^*|X^*,
+\beta)^{\tau/M}f(Y|X, beta)
+\]</span></p>
+<p>It can be sampled by various methods such as the Metropolis-Hasting
+algorithm and the Hamiltonian Monte Carlo (HMC). We recommend to use HMC
+with random step size and with adaptive variances for the momentum
+variables. Before running HMC within Gibbs, the adaptive variances are
+set at the diagonal entries of the inverse Hessian matrix of the
+negative log density at the posterior mode. The initial point of such a
+MCMC step should be the most recent sample of coefficients (<span class="math inline">\(\beta\)</span>).</p>
+<p>For more information, see <span class="citation">(<a href="#ref-catalytic_glm">Huang et al. 2020</a>)</span> and <span class="citation">(<a href="#ref-neal2012mcmc">Neal 2012</a>)</span>.</p>
+<p>Here’s a breakdown of the parameters used:</p>
+<ul>
+<li><p><code>formula</code>, and <code>cat_init</code> are same as <a href="#cat_glm">above</a>.</p></li>
+<li><p><code>iter</code>: Total number of Gibbs sampling iterations.
+Defaults to 2000.</p></li>
+<li><p><code>warmup</code>: Number of warmup iterations in Gibbs
+sampling. Defaults to 1000.</p></li>
+<li><p><code>coefs_iter</code>: Number of iterations in the HMC sampling
+for coefficients. Defaults to 5.</p></li>
+<li><p><code>tau_0</code>: Initial value for tau (down-weighting factor
+for synthetic data). Defaults to one forth of the number of
+predictors.</p></li>
+<li><p><code>tau_alpha</code>: Shape parameter for the gamma
+distribution used in tau sampling. Defaults to 2.</p></li>
+<li><p><code>tau_gamma</code>: Rate parameter for the gamma distribution
+used in tau sampling. Defaults to 1.</p></li>
+<li><p><code>refresh</code>: Logical flag indicating whether to print
+progress in Gibbs sampling. Defaults to TRUE.</p></li>
+<li><p><code>...</code>(ellipsis): Denotes additional arguments that can
+be passed directly to the underlying <code>stats::glm</code>, for
+generating <code>init_coefficients</code> if user not defined, such as
+<code>control</code>, <code>offset</code>, or other model-specific
+settings.</p></li>
+</ul>
+<p>For more details, please refer to
+<code>?cat_glm_bayes_joint_gibbs</code>. Here we assign lower value to
+<code>chains</code>, <code>iter</code> and <code>warmup</code> for
+quicker processing time.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>cat_glm_bayes_joint_gibbs_model <span class="ot">&lt;-</span> <span class="fu">cat_glm_bayes_joint_gibbs</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>  <span class="at">formula =</span> empyr1 <span class="sc">~</span> ., <span class="co"># Same as `~ .`</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">100</span>, <span class="co"># Default: 1000</span></span>
+<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">50</span>, <span class="co"># Default: 500</span></span>
+<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a>  <span class="at">coefs_iter =</span> <span class="dv">2</span>, <span class="co"># Default: 5</span></span>
+<span id="cb35-7"><a href="#cb35-7" tabindex="-1"></a>  <span class="at">tau_0 =</span> <span class="dv">1</span>, <span class="co"># Default: number of predictors / 4</span></span>
+<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a>  <span class="at">tau_alpha =</span> <span class="dv">2</span>, <span class="co"># Default: 2</span></span>
+<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a>  <span class="at">tau_gamma =</span> <span class="dv">1</span>, <span class="co"># Default: 1</span></span>
+<span id="cb35-10"><a href="#cb35-10" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="cn">TRUE</span> <span class="co"># Default: TRUE</span></span>
+<span id="cb35-11"><a href="#cb35-11" tabindex="-1"></a>)</span>
+<span id="cb35-12"><a href="#cb35-12" tabindex="-1"></a></span>
+<span id="cb35-13"><a href="#cb35-13" tabindex="-1"></a>cat_glm_bayes_joint_gibbs_model</span></code></pre></div>
+<p>Here shows how users can simplify the input for
+<code>cat_glm_bayes_joint_gibbs</code>. User do not have to specify
+<code>tau_0</code> and other attributes, as these attributes have
+default value, which mentioned above. Here we assign lower value to
+<code>iter</code> and <code>warmup</code> for quicker processing
+time.</p>
+<p>User can also use <code>traceplot()</code> to check the coefficients
+from <code>cat_glm_bayes_joint_gibbs</code>.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">traceplot</span>(cat_glm_bayes_joint_gibbs_model)</span></code></pre></div>
+<p>And user can select the columns they would like to check.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">traceplot</span>(cat_glm_bayes_joint_gibbs_model, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">&quot;female&quot;</span>, <span class="st">&quot;hsdip&quot;</span>, <span class="st">&quot;numchild&quot;</span>))</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>cat_glm_bayes_joint_gibbs_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>  cat_glm_bayes_joint_gibbs_model,</span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>)</span>
+<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb38-8"><a href="#cb38-8" tabindex="-1"></a>  <span class="st">&quot;Catalytic `cat_glm_bayes_joint_gibbs` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb38-10"><a href="#cb38-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_bayes_joint_gibbs_predicted_y</span>
+<span id="cb38-12"><a href="#cb38-12" tabindex="-1"></a>  )</span>
+<span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_bayes_joint_gibbs_predicted_y</code> from
+<code>cat_glm_bayes_joint_gibbs</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_bayes_joint_gibbs_predicted_y)</span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm_bayes_joint_gibbs)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p>Both <code>cat_glm_bayes_joint_gibbs_model</code> and
+<code>cat_glm_bayes_joint_gibbs_model</code> objects are outputs from
+the <code>cat_glm_bayes_joint_gibbs</code> function, providing a list of
+attributes for further analysis or user inspection.</p>
+<p>Here’s a breakdown of all attributes except the input parameters:</p>
+<ul>
+<li><p><code>function_name</code>: The name of the function
+(<code>cat_glm_bayes_joint_gibbs</code>).</p></li>
+<li><p><code>sys_time</code>: The date and time when sampling
+ended.</p></li>
+<li><p><code>gibbs_iteration_log</code>: A matrix containing the Gibbs
+sampling results for both tau and coefficients.</p></li>
+<li><p><code>inform_df</code>: The summary statistics including mean,
+standard error of mean, standard deviation, quantiles, and effective
+sample size for coefficients and tau.</p></li>
+<li><p><code>tau</code>: The mean of estimated tau from sampled
+value.</p></li>
+<li><p><code>coefficients</code>: The mean of estimated coefficients
+from sampled value.</p></li>
+</ul>
+<p>For more details, please refer to
+<code>?cat_glm_bayes_joint_gibbs</code>.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">names</span>(cat_glm_bayes_joint_gibbs_model)</span></code></pre></div>
+<p>User can extract items mentioned above from
+<code>cat_glm_bayes_joint_gibbs</code> object.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="co"># The Date and time when sampling ended.</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>cat_glm_bayes_joint_gibbs_model<span class="sc">$</span>sys_time</span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a><span class="co"># The summary statistics</span></span>
+<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a>cat_glm_bayes_joint_gibbs_model<span class="sc">$</span>inform_df</span></code></pre></div>
+</div>
+<div id="HighTauLowerBound" class="section level3">
+<h3>Setting Higher Tau Lower Bound</h3>
+<p>Since the inefficiency in sampling is caused by small values of tau,
+a straightforward solution is to modify the joint prior by truncating
+tau to prevent it from approaching 0. The
+<code>cat_glm_bayes_joint</code> function incorporates
+<code>binomial_tau_lower</code> within the <code>rstan</code> model to
+enhance its performance. Adjusting this lower bound transforms the
+parameter space, a critical step in leveraging Bayesian inference to
+manage complex data distributions effectively.</p>
+<p><code>binomial_tau_lower</code> (default is 0.05) sets the minimum
+allowable value for the tau parameter in the Bayesian model, ensuring
+tau is greater than or equal to
+<code>number_of_predictors * binomial_tau_lower</code>, which defines a
+suitable range for model calculations. This adjustment improves the
+coherence of the posterior density and enhances sampling outcomes.
+Additionally, the density of the second derivative is not too small,
+indicating improved performance.</p>
+<p>For breakdown of input parameters and output attributes, please check
+section <a href="#cat_glm_bayes_joint">Bayesian Posterior Sampling with
+Adaptive Tau</a>. Here we assign lower value to <code>chains</code>,
+<code>iter</code> and <code>warmup</code> for quicker processing
+time.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>cat_glm_bayes_joint_tau_lower <span class="ot">&lt;-</span> <span class="fu">cat_glm_bayes_joint</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span>., <span class="co"># Same as `empyr1 ~ .`</span></span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>  <span class="at">binomial_tau_lower =</span> <span class="fl">0.5</span>, <span class="co"># Default: 0.05</span></span>
+<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>, <span class="co"># Default: 4</span></span>
+<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">100</span>, <span class="co"># Default: 2000</span></span>
+<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">50</span> <span class="co"># Default: 1000</span></span>
+<span id="cb42-8"><a href="#cb42-8" tabindex="-1"></a>)</span>
+<span id="cb42-9"><a href="#cb42-9" tabindex="-1"></a></span>
+<span id="cb42-10"><a href="#cb42-10" tabindex="-1"></a>cat_glm_bayes_joint_tau_lower</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>cat_glm_bayes_joint_tau_lower_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>  cat_glm_bayes_joint_tau_lower,</span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb43-5"><a href="#cb43-5" tabindex="-1"></a>)</span>
+<span id="cb43-6"><a href="#cb43-6" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb43-8"><a href="#cb43-8" tabindex="-1"></a>  <span class="st">&quot;Catalytic `cat_glm_bayes_joint_tau_lower` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb43-9"><a href="#cb43-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb43-10"><a href="#cb43-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb43-11"><a href="#cb43-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_bayes_joint_tau_lower_predicted_y</span>
+<span id="cb43-12"><a href="#cb43-12" tabindex="-1"></a>  )</span>
+<span id="cb43-13"><a href="#cb43-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_bayes_joint_tau_lower_predicted_y</code> from
+<code>cat_glm_bayes_joint_tau_lower</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_bayes_joint_tau_lower_predicted_y)</span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (MLE)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>
+<div id="IncorporateTheta" class="section level3">
+<h3>Incorporating theta (1/tau)</h3>
+<p>For GLM Binomial models, the joint distribution of tau and
+coefficients displays a banana-shape contour, which makes it challenging
+for the no-U-turn sampler to effectively transit over the parameter
+space. To address this, the <code>cat_glm_bayes_joint</code> function
+introduces <code>theta = 1/tau</code> into the <code>rstan</code>
+model.</p>
+<p>In the <code>rstan</code> program used in this example,
+<code>theta</code> serves as the inverse of tau, allowing the model to
+adjust its parameterization dynamically based on the the characteristics
+of data.</p>
+<p>This approach enhances flexibility in model fitting, especially when
+dealing with datasets exhibiting diverse and complex patterns across
+different dimensions.</p>
+<p>For breakdown of input parameters and output attributes, please check
+section <a href="#cat_glm_bayes_joint">Bayesian Posterior Sampling with
+Adaptive Tau</a>. Here we assign lower value to <code>chains</code>,
+<code>iter</code> and <code>warmup</code> for quicker processing
+time.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>cat_glm_bayes_joint_theta <span class="ot">&lt;-</span> <span class="fu">cat_glm_bayes_joint</span>(</span>
+<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span>., <span class="co"># Same as `empyr1 ~ .`</span></span>
+<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb45-4"><a href="#cb45-4" tabindex="-1"></a>  <span class="at">binomial_joint_theta =</span> <span class="cn">TRUE</span>, <span class="co"># Default: FALSE</span></span>
+<span id="cb45-5"><a href="#cb45-5" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>, <span class="co"># Default: 4</span></span>
+<span id="cb45-6"><a href="#cb45-6" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">100</span>, <span class="co"># Default: 2000</span></span>
+<span id="cb45-7"><a href="#cb45-7" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">50</span> <span class="co"># Default: 1000</span></span>
+<span id="cb45-8"><a href="#cb45-8" tabindex="-1"></a>)</span>
+<span id="cb45-9"><a href="#cb45-9" tabindex="-1"></a></span>
+<span id="cb45-10"><a href="#cb45-10" tabindex="-1"></a>cat_glm_bayes_joint_theta</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>cat_glm_bayes_joint_theta_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>  cat_glm_bayes_joint_theta,</span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb46-5"><a href="#cb46-5" tabindex="-1"></a>)</span>
+<span id="cb46-6"><a href="#cb46-6" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb46-8"><a href="#cb46-8" tabindex="-1"></a>  <span class="st">&quot;Catalytic `cat_glm_bayes_joint_theta` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb46-9"><a href="#cb46-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb46-10"><a href="#cb46-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb46-11"><a href="#cb46-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_bayes_joint_theta_predicted_y</span>
+<span id="cb46-12"><a href="#cb46-12" tabindex="-1"></a>  )</span>
+<span id="cb46-13"><a href="#cb46-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_bayes_joint_theta_predicted_y</code> from
+<code>cat_glm_bayes_joint_theta</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_bayes_joint_theta_predicted_y)</span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm_bayes_joint_theta)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>
+<div id="IncorporateThetaWithAdapAlpha" class="section level3">
+<h3>Incorporating theta (1/tau) with Adaptive Alpha</h3>
+<p>Additionally, in scenarios where adjusting the spread of data
+(controlled by <code>alpha</code>) significantly impacts model
+performance, the <code>cat_glm_bayes_joint</code> function extends
+the<code>theta = 1/tau</code> approach by introducing a adaptive/joint
+alpha parameter. This enhancement in the <code>rstan</code> model allows
+simultaneous adjustment of both theta and alpha parameters, aiming for
+better convergence and more accurate parameter estimates.</p>
+<p>For breakdown of input parameters and output attributes, please check
+section <a href="#cat_glm_bayes_joint">Bayesian Posterior Sampling with
+Adaptive Tau</a>. Here we assign lower value to <code>chains</code>,
+<code>iter</code> and <code>warmup</code> for quicker processing
+time.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a>cat_glm_bayes_joint_alpha <span class="ot">&lt;-</span> <span class="fu">cat_glm_bayes_joint</span>(</span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span>., <span class="co"># Same as `empyr1 ~ .`</span></span>
+<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a>  <span class="at">cat_init =</span> cat_init,</span>
+<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a>  <span class="at">binomial_joint_theta =</span> <span class="cn">TRUE</span>, <span class="co"># Default: FALSE</span></span>
+<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a>  <span class="at">binomial_joint_alpha =</span> <span class="cn">TRUE</span>, <span class="co"># Default: FALSE</span></span>
+<span id="cb48-6"><a href="#cb48-6" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>, <span class="co"># Default: 4</span></span>
+<span id="cb48-7"><a href="#cb48-7" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">100</span>, <span class="co"># Default: 2000</span></span>
+<span id="cb48-8"><a href="#cb48-8" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">50</span> <span class="co"># Default: 1000</span></span>
+<span id="cb48-9"><a href="#cb48-9" tabindex="-1"></a>)</span>
+<span id="cb48-10"><a href="#cb48-10" tabindex="-1"></a></span>
+<span id="cb48-11"><a href="#cb48-11" tabindex="-1"></a>cat_glm_bayes_joint_alpha</span></code></pre></div>
+<p>Let’s check the prediction error.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a>cat_glm_bayes_joint_alpha_predicted_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a>  cat_glm_bayes_joint_alpha,</span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a>  <span class="at">newdata =</span> test_data,</span>
+<span id="cb49-4"><a href="#cb49-4" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;response&quot;</span></span>
+<span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a>)</span>
+<span id="cb49-6"><a href="#cb49-6" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="#cb49-7" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb49-8"><a href="#cb49-8" tabindex="-1"></a>  <span class="st">&quot;Catalytic `cat_glm_bayes_joint_alpha` - Logarithmic Error:&quot;</span>,</span>
+<span id="cb49-9"><a href="#cb49-9" tabindex="-1"></a>  <span class="fu">get_mean_logarithmic_error</span>(</span>
+<span id="cb49-10"><a href="#cb49-10" tabindex="-1"></a>    <span class="at">Y =</span> test_data<span class="sc">$</span>empyr1,</span>
+<span id="cb49-11"><a href="#cb49-11" tabindex="-1"></a>    <span class="at">est_Y =</span> cat_glm_bayes_joint_alpha_predicted_y</span>
+<span id="cb49-12"><a href="#cb49-12" tabindex="-1"></a>  )</span>
+<span id="cb49-13"><a href="#cb49-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let us check the ROC curve of the
+<code>cat_glm_bayes_joint_alpha_predicted_y</code> from
+<code>cat_glm_bayes_joint_alpha</code> versus the
+<code>test_data$empyr1</code>, this can be a great way to visually
+assess the accuracy and performance of the model.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a>roc_curve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(test_data<span class="sc">$</span>empyr1, cat_glm_bayes_joint_alpha_predicted_y)</span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a><span class="fu">plot</span>(roc_curve, <span class="at">main =</span> <span class="st">&quot;ROC Curve (cat_glm_bayes_joint_alpha)&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-catalytic_glm" class="csl-entry">
+Huang, Dongming, Nathan Stein, Donald B. Rubin, and S. C. Kou. 2020.
+<span>“Catalytic Prior Distributions with Application to Generalized
+Linear Models.”</span> <em>ResearchGate</em>. <a href="https://www.researchgate.net/publication/341417038_Catalytic_prior_distributions_with_application_to_generalized_linear_models">https://www.researchgate.net/publication/341417038_Catalytic_prior_distributions_with_application_to_generalized_linear_models</a>.
+</div>
+<div id="ref-neal2012mcmc" class="csl-entry">
+Neal, Radford M. 2012. <span>“MCMC Using Hamiltonian Dynamics.”</span>
+<a href="https://arxiv.org/pdf/1206.1901">https://arxiv.org/pdf/1206.1901</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

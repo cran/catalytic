@@ -1,0 +1,12 @@
+bibentry(
+    bibtype = "Manual",
+    title = "catalytic: Tools for Applying Catalytic Priors in Statistical Modeling",
+    author = c(
+      person("Yitong", "Wu", email = "ywu039@e.ntu.edu.sg", role = "aut", comment = c(ORCID = "0009-0000-8683-5129")),
+      person("Dongming", "Huang", email = "huang.dongming@nus.edu.sg", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4265-7708")),
+      person("Weihao", "Li", email = "weihao.li@u.nus.edu", role = "aut"),
+      person("Ministry of Education, Singapore", role = "fnd", comment = "The development of this package is supported by the Ministry of Education, Singapore, under the Academic Research Fund Tier 1 A-8000466-00-00 (FY2022).")
+    ),
+    year = "2024",
+    url = "https://CRAN.R-project.org/package=catalytic"
+  )
